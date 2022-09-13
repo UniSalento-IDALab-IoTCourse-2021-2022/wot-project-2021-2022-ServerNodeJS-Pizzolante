@@ -20,21 +20,32 @@ mongoClient.connect(url, (err, db) => {
         const risks_collection = myDb.collection('risks')
 
         // Gestione dell di una richiesta POST sul setting dei parametri
-        app.post('/settings', (req, res) => {
+        app.get('/settings', (req, res) => {
+
+            settings_collection.find({}).toArray(function (err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.send(JSON.stringify(result));
+                }
+            })
+
+        })// app.get
+
+        /*app.post('/risks', (req, res) => {
 
             // Creo l'oggetto setting a partire dal body
-            const newSetting = {
-                base_stations: req.body.base_stations,
-                moving_machinary: req.body.moving_machinary,
+            const newRisk = {
                 reference_points: req.body.reference_points,
+                security_distance: req.body.security_distance,
                 rssi_values: req.body.rssi_values,
                 distances: req.body.distances,
                 tx_power: req.body.tx_power
             }
 
             // Inserisco il setting dei parametri solo se  la collection è vuota
-            settings_collection.count(function (err, count) {
-                if (!err && count === 0) {
+            risks_collection.count(function (err) {
+                if (!err) {
                     settings_collection.insertOne(newSetting, (err, result) => {
                         res.status(200).send()
                     })
@@ -42,7 +53,8 @@ mongoClient.connect(url, (err, db) => {
                     res.status(400).send()
                 }
             });
-        })
+
+        })*/
 
     }
 
