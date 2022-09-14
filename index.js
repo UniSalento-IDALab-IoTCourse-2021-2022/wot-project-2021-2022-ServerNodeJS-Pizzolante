@@ -19,10 +19,23 @@ mongoClient.connect(url, (err, db) => {
         const beacons_collection = myDb.collection('beacons')
         const risks_collection = myDb.collection('risks')
 
-        // Gestione dell di una richiesta POST sul setting dei parametri
+        // Gestione dell di una richiesta GET sul setting dei parametri
         app.get('/settings', (req, res) => {
 
             settings_collection.find({}).toArray(function (err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.send(JSON.stringify(result));
+                }
+            })
+
+        })// app.get
+
+        // Gestione dell di una richiesta GET sul setting dei parametri
+        app.get('/beacons', (req, res) => {
+
+            beacons_collection.find({}).toArray(function (err, result) {
                 if (err) {
                     res.send(err);
                 } else {
