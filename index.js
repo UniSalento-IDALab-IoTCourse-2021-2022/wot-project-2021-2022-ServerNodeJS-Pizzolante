@@ -4,16 +4,12 @@ const mongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017"
 app.use(express.json())
 
-// Definisco il nome del database e delle collections presenti
-const myDb = db.db('worksafe_db')
-const settings_collection = myDb.collection('settings')
-const beacons_collection = myDb.collection('beacons')
-const dangers_collection = myDb.collection('dangers')
-
 // Gestione dell di una richiesta GET sul setting dei parametri
 app.get('/settings', (req, res) => {
     // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
     mongoClient.connect(url, (err, db) => {
+        const myDb = db.db('worksafe_db')
+        const settings_collection = myDb.collection('settings')
         if (err) {
             console.log("Error while connecting mongo client")
         } else {
@@ -31,6 +27,8 @@ app.get('/settings', (req, res) => {
 app.get('/beacons', (req, res) => {
     // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
     mongoClient.connect(url, (err, db) => {
+        const myDb = db.db('worksafe_db')
+        const beacons_collection = myDb.collection('beacons')
         if (err) {
             console.log("Error while connecting mongo client")
         } else {
@@ -46,9 +44,10 @@ app.get('/beacons', (req, res) => {
 })// app.get
 
 app.post('/dangers', (req, res) => {
-
     // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
     mongoClient.connect(url, (err, db) => {
+        const myDb = db.db('worksafe_db')
+        const dangers_collection = myDb.collection('dangers')
         if (err) {
             console.log("Error while connecting mongo client")
         } else {
