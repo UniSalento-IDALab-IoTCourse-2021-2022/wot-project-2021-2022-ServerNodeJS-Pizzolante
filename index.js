@@ -1,27 +1,22 @@
 const express = require('express')
 const app = express()
 const mongoClient = require('mongodb').MongoClient
-
 const url = "mongodb://localhost:27017"
-
 app.use(express.json())
 
-// Connessione a MongoDb all'indirizzo mongodb://localhost:27017
-mongoClient.connect(url, (err, db) => {
+// Definisco il nome del database e delle collections presenti
+const myDb = db.db('worksafe_db')
+const settings_collection = myDb.collection('settings')
+const beacons_collection = myDb.collection('beacons')
+const dangers_collection = myDb.collection('dangers')
 
-    if (err) {
-        console.log("Error while connecting mongo client")
-    } else {
-
-        // Definisco il nome del database e delle collections presenti
-        const myDb = db.db('worksafe_db')
-        const settings_collection = myDb.collection('settings')
-        const beacons_collection = myDb.collection('beacons')
-        const risks_collection = myDb.collection('risks')
-
-        // Gestione dell di una richiesta GET sul setting dei parametri
-        app.get('/settings', (req, res) => {
-
+// Gestione dell di una richiesta GET sul setting dei parametri
+app.get('/settings', (req, res) => {
+    // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
+    mongoClient.connect(url, (err, db) => {
+        if (err) {
+            console.log("Error while connecting mongo client")
+        } else {
             settings_collection.find({}).toArray(function (err, result) {
                 if (err) {
                     res.send(err);
@@ -29,12 +24,16 @@ mongoClient.connect(url, (err, db) => {
                     res.send(JSON.stringify(result));
                 }
             })
+        }
+    })// mongo.connect
+})// app.get
 
-        })// app.get
-
-        // Gestione dell di una richiesta GET sul setting dei parametri
-        app.get('/beacons', (req, res) => {
-
+app.get('/beacons', (req, res) => {
+    // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
+    mongoClient.connect(url, (err, db) => {
+        if (err) {
+            console.log("Error while connecting mongo client")
+        } else {
             beacons_collection.find({}).toArray(function (err, result) {
                 if (err) {
                     res.send(err);
@@ -42,36 +41,38 @@ mongoClient.connect(url, (err, db) => {
                     res.send(JSON.stringify(result));
                 }
             })
+        }
+    })// mongo.connect
+})// app.get
 
-        })// app.get
+app.post('/dangers', (req, res) => {
 
-        /*app.post('/risks', (req, res) => {
-
+    // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
+    mongoClient.connect(url, (err, db) => {
+        if (err) {
+            console.log("Error while connecting mongo client")
+        } else {
             // Creo l'oggetto setting a partire dal body
-            const newRisk = {
-                reference_points: req.body.reference_points,
-                security_distance: req.body.security_distance,
-                rssi_values: req.body.rssi_values,
-                distances: req.body.distances,
-                tx_power: req.body.tx_power
+            const newDanger = {
+                worker_id: req.body.workerId,
+                beacon_id: req.body.beaconId,
+                message: req.body.message,
+                timestamp: req.body.timestamp
             }
 
             // Inserisco il setting dei parametri solo se  la collection è vuota
-            risks_collection.count(function (err) {
+            dangers_collection.count(function (err) {
                 if (!err) {
-                    settings_collection.insertOne(newSetting, (err, result) => {
+                    dangers_collection.insertOne(newDanger, (err, result) => {
                         res.status(200).send()
                     })
                 } else {
                     res.status(400).send()
                 }
             });
-
-        })*/
-
-    }
-
-})
+        }
+    }) // mongo.connection
+})// app.post
 
 app.listen(3000, () => {
     console.log("Listening on port 3000...")
