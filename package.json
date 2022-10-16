@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "chartjs-node-canvas": "^4.1.6",
+    "cors": "^2.8.5"
+  }
 }

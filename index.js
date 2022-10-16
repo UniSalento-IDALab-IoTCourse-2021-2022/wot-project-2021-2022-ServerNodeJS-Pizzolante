@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const mongoClient = require('mongodb').MongoClient
 const url = "mongodb://localhost:27017"
+const cors = require('cors')
+app.use(cors())
 app.use(express.json())
 
 // Gestione dell di una richiesta GET sul setting dei parametri
@@ -73,6 +75,39 @@ app.post('/dangers', (req, res) => {
     }) // mongo.connection
 })// app.post
 
+// Grouping by date
+app.get('/dangers', (req, res) => {
+    // Connessione a MongoDb all'indirizzo mongodb://localhost:27017
+    mongoClient.connect(url, (err, db) => {
+        const myDb = db.db('worksafe_db')
+        const dangers_collection = myDb.collection('dangers')
+        if (err) {
+            console.log("Error while connecting mongo client")
+        } else {
+            dangers_collection.aggregate([
+                {
+                    "$project": {
+                        "_id": { "$toDate": { "$toLong": "$timestamp" }}
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": { "$dateToString": { "format": "%d-%m-%Y", "date": "$_id" } },
+                        "count": { "$sum": 1 }
+                    }
+                }
+            ]).toArray(function (err, result) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.send(JSON.stringify(result))
+                }
+            })
+        }
+    })// mongo.connect
+})// app.get
+
 app.listen(3000, () => {
     console.log("Listening on port 3000...")
 })
+

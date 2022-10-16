@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<canvas id="bar-chart" width="800" height="450"></canvas>
+<script>
+
+    function dateFromDay(year, day){
+        var date = new Date(year, 0); // initialize a date in `year-01-01`
+        return new Date(date.setDate(day)); // add the number of days
+    }
+
+    date_labels = [] // timestamp
+    count = []
+    // get data from back-end
+    fetch ('http://localhost:3000/dangers')
+        .then (response => {return response.json()})
+        .then (data => {
+            data.forEach(danger => {
+                date_labels.push(danger._id)
+                count.push(danger.count)
+            })
+        })
+        .catch(err => console.log(err))
+
+    // Bar chart
+    new Chart(document.getElementById("bar-chart"), {
+        type: 'bar',
+        data: {
+            labels: date_labels,
+            datasets: [
+                {
+                    label: "Number of risks",
+                    backgroundColor: "#FF5722",
+                    data: count
+                }
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'WorkSafe Data Visualization'
+            }
+        }
+    });
+</script>
+
+</body>
+
+</html>
