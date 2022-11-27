@@ -92,10 +92,12 @@ app.get('/dangers', (req, res) => {
                 },
                 {
                     "$group": {
+                        "date": {"$max": "$_id"},
                         "_id": { "$dateToString": { "format": "%d-%m-%Y", "date": "$_id" } },
                         "count": { "$sum": 1 }
                     }
-                }
+                },
+                { "$sort":{"date": 1}}
             ]).toArray(function (err, result) {
                 if (err) {
                     res.send(err);

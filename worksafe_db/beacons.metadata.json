@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"9aa68cba026b472e9c1e5f75c435a1a1","collectionName":"beacons","type":"collection"}
